@@ -1,41 +1,43 @@
-﻿namespace NerdStore.Core.DomainObjects
+﻿using NerdStore.Core.Messages;
+
+namespace NerdStore.Core.DomainObjects
 {
     public abstract class Entity
     {
         public Guid Id { get; private set; }
 
+        private List<Event> _notificacoes;
+        public IReadOnlyCollection<Event> Notificacoes => _notificacoes.AsReadOnly();
+
         protected Entity()
         {
             Id = Guid.NewGuid();
+            _notificacoes = new List<Event>();
         }
 
-        public override bool Equals(object obj)
+        public void AdicionarEvento(Event evento)
         {
-            var compareTo = obj as Entity;
-
-            if (ReferenceEquals(this, compareTo)) return true;
-            if (ReferenceEquals(null, compareTo)) return false;
-
-            return Id.Equals(compareTo.Id);
+            _notificacoes = _notificacoes ?? new List<Event>();
+            _notificacoes.Add(evento);
         }
 
-        public static bool operator ==(Entity a, Entity b)
+        public void RemoverEvento(Event eventItem)
         {
-            // If both are null, or both are same instance, return true.
-            if (ReferenceEquals(a, b)) return true;
-
-            // If one is null, but not both, return false.
-            if (ReferenceEquals(null, a)) return false;
-            if (ReferenceEquals(null, b)) return false;
-
-            // Return true if the fields match:
-            return a.Equals(b);
+            _notificacoes?.Remove(eventItem);
         }
 
-        public static bool operator !=(Entity a, Entity b) => !(a == b);
+        public void LimparEventos()
+        {
+            _notificacoes?.Clear();
+        }
 
         public override int GetHashCode() => (GetType().GetHashCode() * 907) + Id.GetHashCode();
 
         public override string ToString() => $"{GetType().Name} [Id={Id}]";
+
+        public virtual bool EhValido()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
