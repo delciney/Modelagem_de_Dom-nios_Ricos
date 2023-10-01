@@ -24,6 +24,8 @@ using NerdStore.Pagamentos.Data;
 using NerdStore.Pagamentos.Business.Handlers;
 using NerdStore.Pagamentos.Business.Entities;
 using Microsoft.Extensions.DependencyInjection;
+using NerdStore.Core.Data.EventSourcing;
+using EventSourcing;
 
 namespace NerdStore.WebApp.MVC.Setup
 {
@@ -36,6 +38,11 @@ namespace NerdStore.WebApp.MVC.Setup
 
             services.AddScoped<INotificationHandler<DomainNotification>,
                 DomainNotificationHandler>();
+            #endregion
+
+            #region Event Sourcing
+            services.AddSingleton<IEventStoreService, EventStoreService>();
+            services.AddSingleton<IEventSourcingRepository, EventSourcingRepository>();
             #endregion
 
             #region Catalogo
